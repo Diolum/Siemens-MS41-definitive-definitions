@@ -4,7 +4,7 @@
    BMW MS41.0  /  Diolum   -   DEFINITIVE DEFINITION (RomRaider)
   ==========================================================================
    Author      : Diolum (https://diolum.fr)
-   Version     : 1.3  of 18/10/2026
+   Version     : 1.4  of 28/10/2026
    File        : MS41_Diolum_Definitions.xml
    Valid for   : software ID41, ID42, ID12, ID59 and ID60, recognised only
                  by the software number stored in the file (the part number
@@ -29,7 +29,9 @@
                  - ID60: part number 1437806, calibration "0960" (US,
                    OBD-II like the ID42, 97 fault records, post-catalyst
                    trim with the rear O2 sensors)
-   Content     : 690 tables (695 with the 256 KB files), described in English.
+   Content     : tables and scalars per software (24 KB / 256 KB files):
+                 ID41 691 / 696, ID42 961 / 966, ID12 954 / 959,
+                 ID59 669 / 674, ID60 990 / 995; described in English.
                  The 250 tables of the calibration (internal directory of the
                  ECU, from 0x0284 to 0x2D4A in the ID41) are all defined, as
                  well as all the scalars read by the program.
@@ -47,12 +49,12 @@
                  ID12: the ID42 items at their ID12 addresses (the tables
                  without lambda control do not exist in the ID12) plus 16
                  ID12-only items in the red category "ID12 - M Specific".
-                 ID59 (490 tables, 495 with the 256 KB files): the ID41
+                 ID59: the ID41
                  items at their ID59 addresses, taken from the ID59
                  calibration directory and its program (no OBD-II items),
                  plus 7 ID59-only items in the red categories "ID59 - ..."
                  (anti-jerk, canister purge, O2 sensor heater).
-                 ID60 (809 tables, 814 with the 256 KB files): the ID42
+                 ID60: the ID42
                  items, OBD-II monitors included, at their ID60 addresses
                  (the ID60 numbers its scalars differently), in the red
                  categories "ID60 OBD - ...", plus 35 ID60-only items in
