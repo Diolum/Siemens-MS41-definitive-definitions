@@ -19,6 +19,7 @@ One file, every ECU. It is compatible with all known software indexes (**ID41, I
 The definition was created from the **decompilation of all MS41 software versions**. Every software image was disassembled with the same reference parameters, then compared version by version to track every table that was added, removed or relocated between releases.
 
 Because the work starts from the actual program code rather than from sampled addresses, it includes **all the scaling calculations and the comments needed to understand each table**: what it does, how its axes and values are encoded, and the units and sign conventions that apply. Nothing is left as an unexplained raw byte map.
+No table and no constant has been left out. Everything is in the file.
 
 ## Software specificities
 
