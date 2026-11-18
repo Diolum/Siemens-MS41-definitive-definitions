@@ -4,7 +4,7 @@
    BMW MS41 (MS41.0, MS41.1, MS41.2)  /  Diolum   -   DEFINITIVE DEFINITION (RomRaider)
   ==========================================================================
    Author      : Diolum (https://diolum.fr)
-   Version     : 1.5  of 17/11/2026
+   Version     : 1.6  of 18/11/2026
    File        : MS41_Diolum_Definitions.xml
    Valid for   : software ID41, ID42, ID12, ID59, ID60, ID43, ID85, ID41
                  index 00 (ID41i00), ID60 EOBD (ID60EOBD) and ID12 index 01
@@ -158,6 +158,18 @@
    cells (tables).
 
    History:
+     - 1.6 of 18/11/2026: ID59 coding byte 6 states corrected (no
+       O2 sensor auto-detection in the ID59: 0x0C and 0x14 are 1 and 2
+       sensors, 0x18 and 0x1C mean no lambda control); ID85 coding byte 8
+       bits 4-6 (OBD-II and canister purge, no separate EVAP leak and purge
+       flow tests) and byte 7 bit 3 note.
+       Audit of all tables of all IDs against the ten programs (table
+       headers, axis counts, lookup routine and access width): ID59 'O2 Sensor Heater - Adaptation Step Bank 1/2' are byte
+       tables (factor 1.0 = 128); ID59 phase timers described (single
+       timer, 0xF6 not read); 'CH - Idle Speed Target Offset' not read in
+       any ID; ID60 and ID60EOBD 'Exhaust Temp. Model - Init Value F5A0'
+       not read; shared descriptions no longer quote ID41 addresses
+       (wrong for ID41i00 and ID43).
      - 1.5 of 17/11/2026: new ID43 and ID85 definitions (3 file types
        each); ID85 LDP leak test, barometric pressure sensor and DTC
        196 / 197 items with their scalings (pressure 0.1 hPa, AN1 voltage
@@ -288,42 +300,42 @@
 			<table type="Y Axis" name="Coolant Temperature @ Engine Start" storagetype="uint8">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). 1: VANOS is engaged during the cold start to increase air flow and help heating; 0: disabled (can smooth a rough cold start).</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). 1: VANOS is engaged during the cold start to increase air flow and help heating; 0: disabled (can smooth a rough cold start).</description></table>
 	
 	<table type="2D" name="CH - Duration - Idle Speed Target Increase" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="8" userlevel="1">
 		<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1"/>
 			<table type="Y Axis" name="Coolant Temperature @ Engine Start" storagetype="uint8">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Time after start, as a function of coolant temperature at start, during which the target idle speed is raised (LoadSnapshot_And_SecondaryTargets).</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Time after start, as a function of coolant temperature at start, during which the target idle speed is raised (LoadSnapshot_And_SecondaryTargets).</description></table>
 	
 	<table type="2D" name="CH - Duration - Ignition Retard" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="8" userlevel="1">
 		<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1"/>
 			<table type="Y Axis" name="Coolant Temperature @ Engine Start" storagetype="uint8">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Time after start of the heating ignition retard. Setting it to zero also removes the heating enrichment (LoadSnapshot_And_SecondaryTargets).</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Time after start of the heating ignition retard. Setting it to zero also removes the heating enrichment (LoadSnapshot_And_SecondaryTargets).</description></table>
 	
 	<table type="2D" name="CH - Duration - Fuel Enrichment" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="8" userlevel="1">
 		<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1"/>
 			<table type="Y Axis" name="Coolant Temperature @ Engine Start" storagetype="uint8">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Time after start of the heating enrichment (LoadSnapshot_And_SecondaryTargets).</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Time after start of the heating enrichment (LoadSnapshot_And_SecondaryTargets).</description></table>
 	
 	<table type="2D" name="CH - Fuel Enrichment - Multiplicative (Idle)" category="Catalyst Heating" storagetype="uint8" userlevel="3" sizey="8">
 		<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.007813" coarseincrement="0.078125"/>
 			<table type="Y Axis" name="Coolant Temperature" storagetype="uint8" logparam="P2">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Factor (1.0 = 128) applied to 'CH - Fuel Enrichment - Nominal' at idle; the result, plus 'CH - Fuel Enrichment - Additive', gives the heating enrichment factor.</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Factor (1.0 = 128) applied to 'CH - Fuel Enrichment - Nominal' at idle; the result, plus 'CH - Fuel Enrichment - Additive', gives the heating enrichment factor.</description></table>
 	
 	<table type="2D" name="CH - Fuel Enrichment - Multiplicative (above Idle)" category="Catalyst Heating" storagetype="uint8" userlevel="3" sizey="8">
 		<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.007813" coarseincrement="0.078125"/>
 			<table type="Y Axis" name="Coolant Temperature" storagetype="uint8" logparam="P2">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Factor (1.0 = 128) applied to 'CH - Fuel Enrichment - Nominal' above idle; the result, plus 'CH - Fuel Enrichment - Additive', gives the heating enrichment factor.</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Factor (1.0 = 128) applied to 'CH - Fuel Enrichment - Nominal' above idle; the result, plus 'CH - Fuel Enrichment - Additive', gives the heating enrichment factor.</description></table>
 	
 	<table type="3D" name="CH - Fuel Enrichment - Nominal" category="Catalyst Heating" storagetype="uint8" userlevel="3" sizex="8" sizey="8">
 		<scaling units="factor" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.003906" coarseincrement="0.039063"/>
@@ -333,7 +345,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Base injection time correction factor (engine speed x load, RPM_Load_ScaledCorrection_Calc), multiplied by one of the 'Multiplicative' tables then increased by 'Additive'.</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Base injection time correction factor (engine speed x load, RPM_Load_ScaledCorrection_Calc), multiplied by one of the 'Multiplicative' tables then increased by 'Additive'.</description></table>
 	
 	<table type="3D" name="CH - Fuel Enrichment - Additive" category="Catalyst Heating" storagetype="uint16" endian="little" userlevel="3" sizey="8" sizex="8">
 		<scaling units="factor" expression="x/4096+0.5" to_byte="(x-0.5)*4096" format="0.0000" fineincrement="0.000244" coarseincrement="0.002441"/>
@@ -343,7 +355,7 @@
 			<table type="Y Axis" name="Coolant Temperature" storagetype="uint8" logparam="P2">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the durations 0x12F2/0x1316/0x19D6 are only read with ConfigFlags_FD4C.15 = 1; no-lambda variants 0x12E0/0x1304/0x19C4). Catalyst heating base factor (0.5 to 1.5) combined with the multiplied nominal enrichment, as a function of coolant temperature and time after start.</description></table>
+		<description>Catalyst heating (CH): function active after a cold start, vehicles with lambda control (the 'CH - Duration' tables are only read with ConfigFlags_FD4C.15 = 1; otherwise their '(No Lambda) (new)' variants are read). Catalyst heating base factor (0.5 to 1.5) combined with the multiplied nominal enrichment, as a function of coolant temperature and time after start.</description></table>
 
 <!--Catalyst Overheating Protection-->
 	<table type="3D" name="COP - Fuel Enrichment - Nominal" category="Catalyst Overheating Protection" storagetype="uint8" userlevel="1" sizex="6" sizey="6">
@@ -614,14 +626,14 @@
 			<table type="Y Axis" name="ECU Cycles" storagetype="uint8">
 				<scaling units="fraction of phase" expression="x/256" to_byte="x*256" format="0.000" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Load increase enrichment (PerInstance_RPM_Load_Init / _Calc_C). Reduction slope used when coolant temperature is below the threshold 'Fuel - Correction Table ECT Threshold (new)' (0x23D). Axis: remaining fraction of the session (255 - elapsed time x 256 / total time), x/256. Name in the BMW software: IP_TI_FAC_1_AE_RST(_AT)__CYC.</description></table>
+		<description>Load increase enrichment (PerInstance_RPM_Load_Init / _Calc_C). Reduction slope used when coolant temperature is below the threshold 'Fuel - Correction Table ECT Threshold (new)'. Axis: remaining fraction of the session (255 - elapsed time x 256 / total time), x/256. Name in the BMW software: IP_TI_FAC_1_AE_RST(_AT)__CYC.</description></table>
 	
 	<table type="2D" name="Fuel Enrichment - Increasing Load - Reduction Gradient (Normal ECT)" category="Acceleration" storagetype="uint8" userlevel="3" sizey="6">
 		<scaling units="factor" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.003906" coarseincrement="0.039063"/>
 			<table type="Y Axis" name="ECU Cycles" storagetype="uint8">
 				<scaling units="fraction of phase" expression="x/256" to_byte="x*256" format="0.000" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Load increase enrichment (PerInstance_RPM_Load_Init / _Calc_C). Reduction slope used when coolant temperature is at or above the threshold 'Fuel - Correction Table ECT Threshold (new)' (0x23D). Axis: remaining fraction of the session (255 - elapsed time x 256 / total time), x/256. Name in the BMW software: IP_TI_FAC_2_AE_RST(_AT)__CYC.</description></table>
+		<description>Load increase enrichment (PerInstance_RPM_Load_Init / _Calc_C). Reduction slope used when coolant temperature is at or above the threshold 'Fuel - Correction Table ECT Threshold (new)'. Axis: remaining fraction of the session (255 - elapsed time x 256 / total time), x/256. Name in the BMW software: IP_TI_FAC_2_AE_RST(_AT)__CYC.</description></table>
 	
 	<!--Deceleration-->
 	<table type="2D" name="Fuel Restore - RPM" category="Deceleration" storagetype="uint8" userlevel="1" sizey="6">
@@ -882,7 +894,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint16" endian="little" logparam="P8">
 				<scaling units="rpm" expression="x" to_byte="x" format="#" fineincrement="50" coarseincrement="100"/>
 			</table>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x9F8) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description></table>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description></table>
 	
 	<table type="3D" name="Fuel Injection - Base - VANOS Correction" category="Fuel" storagetype="uint16" endian="little" sizex="12" sizey="16" userlevel="1">
 		<scaling units="ms" expression="(x-32768)*349.52/65535" to_byte="x/(349.52/65535)+32768" format="0.000" fineincrement="0.005333" coarseincrement="0.053333"/>
@@ -943,7 +955,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint16" endian="little" logparam="P8">
 				<scaling units="rpm" expression="x" to_byte="x" format="#" fineincrement="50" coarseincrement="100"/>
 			</table>
-		<description>Base quantity during cranking (engine state 1), as a function of engine speed and coolant temperature (word grid); result Crank_FuelBase, then multiplied by 'Fuel Injection - Cranking - Decay (vs ECT/Cranking Cycles) (new)' and the hot restart factor in Fuel_InjectionTime_Calc. Read by the per-engine-state base calculation routine (0x2F91E).</description></table>
+		<description>Base quantity during cranking (engine state 1), as a function of engine speed and coolant temperature (word grid); result Crank_FuelBase, then multiplied by 'Fuel Injection - Cranking - Decay (vs ECT/Cranking Cycles) (new)' and the hot restart factor in Fuel_InjectionTime_Calc. Read by the per-engine-state base calculation routine (BaseMaps_PerEngineState_Calc).</description></table>
 	
 	<table type="2D" name="Fuel Injector - Dead Time / Latency" category="Fuel" storagetype="uint8" sizey="8" userlevel="1">
 		<scaling units="ms" expression="x*10.87/255" to_byte="x/(10.87/255)" format="0.00" fineincrement="0.042627" coarseincrement="0.426275"/>
@@ -957,7 +969,7 @@
 			<table type="Static Y Axis" name="Engine Speed" sizey="1">
 				<data>Scaling Factor</data>
 			</table>
-		<description>Factor (1.0 = 128; used x256 by MulU16_HighWord) applied to the sum of fuel flows (FuelConsumption_Rate) before division by 3 for the fuel consumption gauge (block 0x2F1B2). See also 'Scaling Factor 2'.</description></table>
+		<description>Factor (1.0 = 128; used x256 by MulU16_HighWord) applied to the sum of fuel flows (FuelConsumption_Rate) before division by 3 for the fuel consumption gauge (FuelCons_PulseWidth_Calc). See also 'Scaling Factor 2'.</description></table>
 	
 	<table type="2D" name="Fuel Economy Gauge - Scaling Factor 2" category="Fuel" storagetype="uint16" endian="little" userlevel="1" sizey="1">
 		<scaling units="factor" expression="x/8192" to_byte="x*8192" format="0.000" fineincrement="0.000122" coarseincrement="0.001221"/>
@@ -975,7 +987,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint16" endian="little" logparam="P8">
 				<scaling units="rpm" expression="x" to_byte="x" format="#" fineincrement="50" coarseincrement="100"/>
 			</table>
-		<description>Base ignition advance map (engine speed x load) at part load / full load (engine states other than cranking and idle), used when lambda control is present (ConfigFlags_FD4C.15 = 1). The weighted VANOS correction (map 0x11C8, RPM_Load_ModeSelectB_E97C, 128 = 0) is added; result IgnTiming_BaseValue (routine 0x2F91E).</description></table>
+		<description>Base ignition advance map (engine speed x load) at part load / full load (engine states other than cranking and idle), used when lambda control is present (ConfigFlags_FD4C.15 = 1). The weighted VANOS correction ('Ignition Timing - Base - VANOS Correction', weight RPM_Load_ModeSelectB_E97C, 128 = 0) is added; result IgnTiming_BaseValue (BaseMaps_PerEngineState_Calc).</description></table>
 	
 	<table type="3D" name="Ignition Timing - Base 2" category="Ignition Timing" storagetype="uint8" sizex="12" sizey="16" userlevel="1">
 		<scaling units="°CRK" expression="x*0.375-23.625" to_byte="(x+23.625)/0.375" format="0.0" fineincrement="0.375" coarseincrement="3.75"/>
@@ -985,7 +997,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint16" endian="little" logparam="P8">
 				<scaling units="rpm" expression="x" to_byte="x" format="#" fineincrement="50" coarseincrement="100"/>
 			</table>
-		<description>Base ignition advance map (engine speed x load) at part load / full load, used instead of 'Ignition Timing - Base' when there is no lambda control (ConfigFlags_FD4C.15 = 0, coding byte 6). The weighted VANOS correction (map 0x11C8) is added; result IgnTiming_BaseValue (BaseMaps_PerEngineState_Calc). It is not a fallback map for a sensor or catalyst fault: the choice depends only on whether lambda control is present.</description></table>
+		<description>Base ignition advance map (engine speed x load) at part load / full load, used instead of 'Ignition Timing - Base' when there is no lambda control (ConfigFlags_FD4C.15 = 0, coding byte 6). The weighted VANOS correction ('Ignition Timing - Base - VANOS Correction') is added; result IgnTiming_BaseValue (BaseMaps_PerEngineState_Calc). It is not a fallback map for a sensor or catalyst fault: the choice depends only on whether lambda control is present.</description></table>
 	
 	<table type="3D" name="Ignition Timing - Base - VANOS Correction" category="Ignition Timing" storagetype="uint8" sizex="12" sizey="16" userlevel="1">
 		<scaling units="°CRK" expression="(x-128)*0.375" to_byte="x/0.375+128" format="0.0" fineincrement="0.375" coarseincrement="3.75"/>
@@ -1162,7 +1174,7 @@
 			<table type="X Axis" name="TPS" storagetype="uint8" sizey="5" endian="little" logparam="P13">
 				<scaling units="° throttle" expression="x*119.5/255" to_byte="x/(119.5/255)" format="0.0" fineincrement=".5" coarseincrement="5"/>
 			</table>
-		<description>Idle valve opening as a function of engine speed and throttle angle (support on throttle closing); the tracked value E8F4 rises by at most 'IACV - Map Rise Step (new)' and falls by at most 'IACV - Map Fall Step (new)' per calculation (routine 0x297A2). Internally the byte is shifted by 7 bits into a word where 100 % = 32768, and IACV_Duty_Sum_Output subtracts 0x1999 (20 %) before doubling it into the final duty: hence 0.3906 % per step with a -20 % offset.</description></table>
+		<description>Idle valve opening as a function of engine speed and throttle angle (support on throttle closing); the tracked value E8F4 rises by at most 'IACV - Map Rise Step (new)' and falls by at most 'IACV - Map Fall Step (new)' per calculation (IACV_PreControl_Calc). Internally the byte is shifted by 7 bits into a word where 100 % = 32768, and IACV_Duty_Sum_Output subtracts 0x1999 (20 %) before doubling it into the final duty: hence 0.3906 % per step with a -20 % offset.</description></table>
 	
 	<table type="2D" name="IACV - ECT (M/T or A/T in Neutral)" category="Idle Air Control Valve" storagetype="uint8" sizey="6" userlevel="1">
 		<scaling units="%" expression="x*100/256" to_byte="x/(100/256)" format="0.0" fineincrement="0.390627" coarseincrement="3.906275"/>
@@ -1214,7 +1226,7 @@
 			<table type="X Axis" name="Coolant Temperature" storagetype="uint8" sizey="8" endian="little" logparam="P2">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Idle valve opening factor during cranking (word_FD14.1), as a function of engine speed and coolant temperature, multiplied by the temperature factor E8FF (1.0 = 128) then by the computed opening (IACV_Duty_E902); the product is shifted by 3 bits (routine 0x29A6A), so this factor is 1.0 = 64.</description></table>
+		<description>Idle valve opening factor during cranking (word_FD14.1), as a function of engine speed and coolant temperature, multiplied by the temperature factor E8FF (1.0 = 128) then by the computed opening (IACV_Duty_E902); the product is shifted by 3 bits (IACV_Duty_Sum_Output), so this factor is 1.0 = 64.</description></table>
 
 <!--Idle Speed Regulation-->
 	<table type="2D" name="ISR - Proportional" category="Idle Speed Regulation" storagetype="uint8" userlevel="1" sizey="12">
@@ -1257,7 +1269,7 @@
 			<table type="Static Y Axis" name="Minimum" sizey="1">
 				<data>Engine Speed Gradient</data>
 			</table>
-		<description>Engine speed gradient (RPM_Gradient_S8, signed) below 'Intercept - RPM' under which the speed drop is detected: word_FD26.2/3 set and the 'ISR - Derivative - Min. Time (new)' delay armed (routine 0x2A10A). See 'ISR - Derivative'.</description></table>
+		<description>Engine speed gradient (RPM_Gradient_S8, signed) below 'Intercept - RPM' under which the speed drop is detected: word_FD26.2/3 set and the 'ISR - Derivative - Min. Time (new)' delay armed (IdleSpeed_PID_Controller). See 'ISR - Derivative'.</description></table>
 	
 	<table type="2D" name="ISR - Aggression - ECT Compensation" category="Idle Speed Regulation" storagetype="uint8" userlevel="1" sizey="4">
 		<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.007813" coarseincrement="0.078125"/>
@@ -1794,7 +1806,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="30" coarseincrement="300"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Minimum load (engine speed x coolant temperature) to allow knock detection.</description></table>
+		<description>Knock control (Knock_Control_Update). Minimum load (engine speed x coolant temperature) to allow knock detection.</description></table>
 	
 	<table type="3D" name="Max. Knock Retard" category="Knock" storagetype="uint8" sizex="4" sizey="8" userlevel="2">
 		<scaling units="°CRK" expression="(x-128)*0.375" to_byte="x/0.375+128" format="0.0" fineincrement="0.375" coarseincrement="3.75"/>
@@ -1804,35 +1816,35 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="30" coarseincrement="300"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Limp-home ignition angle of the knock control (engine speed x load). This table is only read without lambda control (ConfigFlags_FD4C.15 = 0); with lambda control it is 'Max. Knock Retard (Lambda) (new)' (0x2402).</description></table>
+		<description>Knock control (Knock_Control_Update). Limp-home ignition angle of the knock control (engine speed x load). This table is only read without lambda control (ConfigFlags_FD4C.15 = 0); with lambda control it is 'Max. Knock Retard (Lambda) (new)'.</description></table>
 	
 	<table type="2D" name="Max. Knock Retard (ECT)" category="Knock" storagetype="uint8" sizey="8" userlevel="3">
 		<scaling units="factor" expression="x/256" to_byte="x*256" format="0.000" fineincrement="0.003906" coarseincrement="0.039059"/>
 			<table type="Y Axis" name="Coolant Temperature" storagetype="uint8" logparam="P2">
 				<scaling units="°C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="1" coarseincrement="10"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Coolant temperature dependent weighting factor applied to the limp-home ignition angle.</description></table>
+		<description>Knock control (Knock_Control_Update). Coolant temperature dependent weighting factor applied to the limp-home ignition angle.</description></table>
 	
 	<table type="2D" name="Knock Retard - Step Size (Regular Intensity)" category="Knock" storagetype="uint8" sizey="3" userlevel="3">
 		<scaling units="°CRK per 720°CRK" expression="x*0.375" to_byte="x/0.375" format="0.0" fineincrement="0.375" coarseincrement="3.75"/>
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="30" coarseincrement="300"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Retard step applied for a knock of normal intensity (intensity 1).</description></table>
+		<description>Knock control (Knock_Control_Update). Retard step applied for a knock of normal intensity (intensity 1).</description></table>
 	
 	<table type="2D" name="Knock Retard - Step Size (Higher Intensity)" category="Knock" storagetype="uint8" sizey="3" userlevel="3">
 		<scaling units="°CRK per 720°CRK" expression="x*0.375" to_byte="x/0.375" format="0.0" fineincrement="0.375" coarseincrement="3.75"/>
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="30" coarseincrement="300"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Retard step applied for a knock of high intensity (intensity 2).</description></table>
+		<description>Knock control (Knock_Control_Update). Retard step applied for a knock of high intensity (intensity 2).</description></table>
 	
 	<table type="2D" name="No Knock Advance - Step Size" category="Knock" storagetype="uint16" endian="little" sizey="16" userlevel="3">
 		<scaling units="°CRK per 720°CRK" expression="x*3/2048" to_byte="x/(3/2048)" format="0.000" fineincrement="0.001465" coarseincrement="0.014648"/>
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="30" coarseincrement="300"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Advance-back step when no knock is detected.</description></table>
+		<description>Knock control (Knock_Control_Update). Advance-back step when no knock is detected.</description></table>
 	
 	<table type="3D" name="Knock Detection Threshold - Multiplicative Factor - Cylinder 6" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="factor" expression="x/32" to_byte="x*32" format="0.00" fineincrement="0.031247" coarseincrement="0.312471"/>
@@ -1842,7 +1854,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Knock detection threshold factor of cylinder 6 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Knock detection threshold factor of cylinder 6 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Threshold - Multiplicative Factor - Cylinder 2" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="factor" expression="x/32" to_byte="x*32" format="0.00" fineincrement="0.031247" coarseincrement="0.312471"/>
@@ -1852,7 +1864,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Knock detection threshold factor of cylinder 2 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Knock detection threshold factor of cylinder 2 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Threshold - Multiplicative Factor - Cylinder 4" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="factor" expression="x/32" to_byte="x*32" format="0.00" fineincrement="0.031247" coarseincrement="0.312471"/>
@@ -1862,7 +1874,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Knock detection threshold factor of cylinder 4 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Knock detection threshold factor of cylinder 4 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Threshold - Multiplicative Factor - Cylinder 1" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="factor" expression="x/32" to_byte="x*32" format="0.00" fineincrement="0.031247" coarseincrement="0.312471"/>
@@ -1872,7 +1884,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Knock detection threshold factor of cylinder 1 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Knock detection threshold factor of cylinder 1 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Threshold - Multiplicative Factor - Cylinder 5" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="factor" expression="x/32" to_byte="x*32" format="0.00" fineincrement="0.031247" coarseincrement="0.312471"/>
@@ -1882,7 +1894,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Knock detection threshold factor of cylinder 5 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Knock detection threshold factor of cylinder 5 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Threshold - Multiplicative Factor - Cylinder 3" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="factor" expression="x/32" to_byte="x*32" format="0.00" fineincrement="0.031247" coarseincrement="0.312471"/>
@@ -1892,7 +1904,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Knock detection threshold factor of cylinder 3 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Knock detection threshold factor of cylinder 3 (engine speed x load), applied to the reference level of the cylinder. For a value k of CylIndex_Latched (firing position 0-5), the program reads the factor table of firing position k+3 (jump table 0x2934).</description></table>
 	  
 	<table type="3D" name="Knock Detection Window - Start - Cylinder 5" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1902,7 +1914,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Start of the knock sensor listening window for cylinder 5 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Start of the knock sensor listening window for cylinder 5 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Window - Start - Cylinder 3" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1912,7 +1924,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Start of the knock sensor listening window for cylinder 3 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Start of the knock sensor listening window for cylinder 3 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Window - Start - Cylinder 6" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1922,7 +1934,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Start of the knock sensor listening window for cylinder 6 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Start of the knock sensor listening window for cylinder 6 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Window - Start - Cylinder 2" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1932,7 +1944,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Start of the knock sensor listening window for cylinder 2 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Start of the knock sensor listening window for cylinder 2 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Window - Start - Cylinder 4" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1942,7 +1954,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Start of the knock sensor listening window for cylinder 4 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Start of the knock sensor listening window for cylinder 4 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Window - Start - Cylinder 1" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1952,7 +1964,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Start of the knock sensor listening window for cylinder 1 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
+		<description>Knock control (Knock_Control_Update). Start of the knock sensor listening window for cylinder 1 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC: the interrupt adds it to the cylinder tooth number modulo 120 (CC_AngleResult). The window of the next cylinder to fire is prepared (firing position k+1 for CylIndex_Latched = k, jump table 0x2934).</description></table>
 	
 	<table type="3D" name="Knock Detection Window - End - Cylinder 5" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1962,7 +1974,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). End of the knock sensor listening window for cylinder 5 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
+		<description>Knock control (Knock_Control_Update). End of the knock sensor listening window for cylinder 5 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
 	
 	<table type="3D" name="Knock Detection Window - End - Cylinder 3" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1972,7 +1984,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). End of the knock sensor listening window for cylinder 3 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
+		<description>Knock control (Knock_Control_Update). End of the knock sensor listening window for cylinder 3 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
 	
 	<table type="3D" name="Knock Detection Window - End - Cylinder 6" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1982,7 +1994,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). End of the knock sensor listening window for cylinder 6 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
+		<description>Knock control (Knock_Control_Update). End of the knock sensor listening window for cylinder 6 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
 	
 	<table type="3D" name="Knock Detection Window - End - Cylinder 2" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -1992,7 +2004,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). End of the knock sensor listening window for cylinder 2 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
+		<description>Knock control (Knock_Control_Update). End of the knock sensor listening window for cylinder 2 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
 	
 	<table type="3D" name="Knock Detection Window - End - Cylinder 4" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -2002,7 +2014,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). End of the knock sensor listening window for cylinder 4 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
+		<description>Knock control (Knock_Control_Update). End of the knock sensor listening window for cylinder 4 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
 	
 	<table type="3D" name="Knock Detection Window - End - Cylinder 1" category="Knock" storagetype="uint8" sizex="4" sizey="16" userlevel="3">
 		<scaling units="°CRK after TDC" expression="x*6" to_byte="x/6" format="0" fineincrement="6" coarseincrement="60"/>
@@ -2012,7 +2024,7 @@
 			<table type="Y Axis" name="Engine Speed" storagetype="uint8">
 				<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="50" coarseincrement="500"/>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). End of the knock sensor listening window for cylinder 1 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
+		<description>Knock control (Knock_Control_Update). End of the knock sensor listening window for cylinder 1 (engine speed x load, read without interpolation). 1 unit = 1 tooth = 6 crank degrees after TDC; if the start is beyond the end, the end is set to start + 1 tooth.</description></table>
 	
 	<table type="2D" name="Knock Tables X Axis (Load)" category="Knock" storagetype="uint8" sizey="4" endian="little" userlevel="4">
 		<scaling units="mg/stroke" expression="x*(1389/255)" to_byte="x/(1389/255)" format="#" fineincrement="5" coarseincrement="50"/>
@@ -2022,7 +2034,7 @@
 				<data> 3</data>
 				<data> 4</data>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Load axis shared by the knock tables. After changing it, reload the file immediately.</description></table>
+		<description>Knock control (Knock_Control_Update). Load axis shared by the knock tables. After changing it, reload the file immediately.</description></table>
 	
 	<table type="2D" name="Knock Tables Y Axis (Engine Speed)" category="Knock" storagetype="uint8" sizey="16" endian="little" userlevel="4">
 		<scaling units="rpm" expression="x*32" to_byte="x/32" format="#" fineincrement="30" coarseincrement="300"/>
@@ -2044,7 +2056,7 @@
 				<data> 15</data>
 				<data> 16</data>
 			</table>
-		<description>Knock control (Knock_Control_Update, 0x26E16). Engine speed axis shared by the knock tables. After changing it, reload the file immediately.</description></table>
+		<description>Knock control (Knock_Control_Update). Engine speed axis shared by the knock tables. After changing it, reload the file immediately.</description></table>
 	  
 
 <!--Checksum-->	  
@@ -2100,7 +2112,7 @@
 	<table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x12F2">
 		<table type="Y Axis" storageaddress="0x66B"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x98"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x98"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x1316">
 		<table type="Y Axis" storageaddress="0x66B"/>
@@ -3392,7 +3404,7 @@
 <table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x112F2">
 		<table type="Y Axis" storageaddress="0x1066B"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x10098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x10098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x11316">
 		<table type="Y Axis" storageaddress="0x1066B"/>
@@ -4707,7 +4719,7 @@
 <table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x152F2">
 		<table type="Y Axis" storageaddress="0x1466B"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x14098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x14098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x15316">
 		<table type="Y Axis" storageaddress="0x1466B"/>
@@ -6021,7 +6033,7 @@
 <table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x112F2">
 		<table type="Y Axis" storageaddress="0x1066B"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x10098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x10098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x11316">
 		<table type="Y Axis" storageaddress="0x1066B"/>
@@ -7335,7 +7347,7 @@
 <table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x152F2">
 		<table type="Y Axis" storageaddress="0x1466B"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x14098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x14098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x15316">
 		<table type="Y Axis" storageaddress="0x1466B"/>
@@ -8652,7 +8664,7 @@
 	<table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x12F4">
 		<table type="Y Axis" storageaddress="0x66D"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x98"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x98"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x1318">
 		<table type="Y Axis" storageaddress="0x66D"/>
@@ -9960,7 +9972,7 @@
 <table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x112F4">
 		<table type="Y Axis" storageaddress="0x1066D"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x10098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x10098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x11318">
 		<table type="Y Axis" storageaddress="0x1066D"/>
@@ -11292,7 +11304,7 @@
 <table name="CH - Duration - Idle Speed Target Increase" storageaddress="0x152F4">
 		<table type="Y Axis" storageaddress="0x1466D"/>
 	</table>
-	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x14098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description></table>
+	<table type="2D" name="CH - Idle Speed Target Offset (new)" category="Catalyst Heating" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x14098"><scaling units="rpm" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10"/><table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1"><data>Idle Speed Target Offset</data></table><description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description></table>
 	
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x15318">
 		<table type="Y Axis" storageaddress="0x1466D"/>
@@ -12626,7 +12638,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x1440">
 		<table type="Y Axis" storageaddress="0x795"/>
@@ -12910,7 +12922,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0xB22">
 		<table type="X Axis" storageaddress="0x8A6"/>
 		<table type="Y Axis" storageaddress="0x8C0"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B22) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0xE78">
 		<table type="Y Axis" storageaddress="0x8C0"/>
@@ -19027,7 +19039,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x11440">
 		<table type="Y Axis" storageaddress="0x10795"/>
@@ -19311,7 +19323,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0x10B22">
 		<table type="X Axis" storageaddress="0x108A6"/>
 		<table type="Y Axis" storageaddress="0x108C0"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B22) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10E78">
 		<table type="Y Axis" storageaddress="0x108C0"/>
@@ -25492,7 +25504,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x15440">
 		<table type="Y Axis" storageaddress="0x14795"/>
@@ -25776,7 +25788,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0x14B22">
 		<table type="X Axis" storageaddress="0x148A6"/>
 		<table type="Y Axis" storageaddress="0x148C0"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B22) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14E78">
 		<table type="Y Axis" storageaddress="0x148C0"/>
@@ -31966,7 +31978,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x12D2">
 		<table type="Y Axis" storageaddress="0x787"/>
@@ -32250,7 +32262,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0xB14">
 		<table type="X Axis" storageaddress="0x898"/>
 		<table type="Y Axis" storageaddress="0x8B2"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B14) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0xE6A">
 		<table type="Y Axis" storageaddress="0x8B2"/>
@@ -38326,7 +38338,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x112D2">
 		<table type="Y Axis" storageaddress="0x10787"/>
@@ -38610,7 +38622,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0x10B14">
 		<table type="X Axis" storageaddress="0x10898"/>
 		<table type="Y Axis" storageaddress="0x108B2"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B14) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10E6A">
 		<table type="Y Axis" storageaddress="0x108B2"/>
@@ -44750,7 +44762,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x152D2">
 		<table type="Y Axis" storageaddress="0x14787"/>
@@ -45034,7 +45046,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0x14B14">
 		<table type="X Axis" storageaddress="0x14898"/>
 		<table type="Y Axis" storageaddress="0x148B2"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B14) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14E6A">
 		<table type="Y Axis" storageaddress="0x148B2"/>
@@ -51169,7 +51181,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x112D2">
 		<table type="Y Axis" storageaddress="0x10787"/>
@@ -51453,7 +51465,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0x10B14">
 		<table type="X Axis" storageaddress="0x10898"/>
 		<table type="Y Axis" storageaddress="0x108B2"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B14) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID12i01: 35 of 192 values differ from the ID12 file.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID12i01: 35 of 192 values differ from the ID12 file.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10E6A">
 		<table type="Y Axis" storageaddress="0x108B2"/>
@@ -57588,7 +57600,7 @@
 		<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 			<data>Idle Speed Target Offset</data>
 		</table>
-		<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+		<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 	</table>
 	<table name="CH - Duration - Ignition Retard" storageaddress="0x152D2">
 		<table type="Y Axis" storageaddress="0x14787"/>
@@ -57872,7 +57884,7 @@
 	<table name="Fuel Injection - Base" storageaddress="0x14B14">
 		<table type="X Axis" storageaddress="0x14898"/>
 		<table type="Y Axis" storageaddress="0x148B2"/>
-		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B14) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID12i01: 35 of 192 values differ from the ID12 file.</description>
+		<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID12i01: 35 of 192 values differ from the ID12 file.</description>
 	</table>
 	<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14E6A">
 		<table type="Y Axis" storageaddress="0x148B2"/>
@@ -63992,17 +64004,17 @@
 			<description>Raw value of coding byte 5 (stock 0xAC = 172). See 'Byte 5 - Transmission (new)'.</description>
 		</table>
 		<table name="Byte 6 - O2 Feedback" storageaddress="0x6">
-			<state name="Lambda control - 1 sensor (coded)" data="00" />
-			<state name="Lambda control - 2 sensors (coded)" data="08" />
-			<state name="Lambda control - 1 sensor, auto-detection" data="18" />
-			<state name="Lambda control - 2 sensors, auto-detection (stock)" data="1C" />
-			<state name="No lambda control (engine without catalyst)" data="04" />
-			<state name="Lambda control - 1 sensor (coded) + CAN monitoring (0x20)" data="20" />
-			<state name="Lambda control - 2 sensors (coded) + CAN monitoring (0x28)" data="28" />
-			<state name="Lambda control - 1 sensor, auto-detection + CAN monitoring (0x38)" data="38" />
-			<state name="Lambda control - 2 sensors, auto-detection + CAN monitoring (0x3C)" data="3C" />
+			<state name="Lambda control - 1 sensor (0x00)" data="00" />
+			<state name="Lambda control - 1 sensor (0x0C)" data="0C" />
+			<state name="Lambda control - 2 sensors (0x08)" data="08" />
+			<state name="Lambda control - 2 sensors (0x14)" data="14" />
+			<state name="No lambda control (engine without catalyst, 0x04)" data="04" />
+			<state name="Lambda control - 1 sensor + CAN monitoring (0x20)" data="20" />
+			<state name="Lambda control - 1 sensor + CAN monitoring (0x2C)" data="2C" />
+			<state name="Lambda control - 2 sensors + CAN monitoring (0x28)" data="28" />
+			<state name="Lambda control - 2 sensors + CAN monitoring (0x34)" data="34" />
 			<state name="No lambda control (engine without catalyst) + CAN monitoring (0x24)" data="24" />
-			<description>Lambda configuration (bits 2-4 of coding byte 6). Bit 5 set: CAN monitoring forced on (see 'Byte 6 - CAN Monitoring / EWS Input (new)').</description>
+			<description>Lambda configuration (bits 2-4 of coding byte 6). The ID59 has no auto-detection of the O2 sensors: 0x00 or 0x0C = 1 sensor, 0x08 or 0x14 = 2 sensors (the two values of a pair act the same); 0x04 and any other value (0x18 and 0x1C included) = no lambda control, the '(No Lambda)' maps are used. Bit 5 set: CAN monitoring forced on (see 'Byte 6 - CAN Monitoring / EWS Input (new)'). ID59 value: 4 (ID41: 28).</description>
 		</table>
 		<table name="Byte 7" storageaddress="0x7">
 			<description>Raw value of coding byte 7 (stock 0x09 = 9). See 'Byte 7 - ABS/ASC / Purge / CRC (new)'.</description>
@@ -64019,7 +64031,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x1188">
 			<table type="Y Axis" storageaddress="0x63D" />
@@ -64303,7 +64315,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x9CA">
 			<table type="X Axis" storageaddress="0x74E" />
 			<table type="Y Axis" storageaddress="0x768" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x9CA) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0xD20">
 			<table type="Y Axis" storageaddress="0x768" />
@@ -65621,19 +65633,19 @@
 			</table>
 			<description>O2 sensor heating: rate of decrease of the duty cycle towards 'O2 Sensor Heater - Base Duty (vs RPM/Load) (new)', as a function of air flow.</description>
 		</table>
-		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint16" endian="little" sizey="8" userlevel="5" storageaddress="0x2012">
-			<scaling units="factor" expression="x*1.9922/65535" to_byte="x/(1.9922/65535)" format="0.000" fineincrement="0.00003" coarseincrement="0.000304" />
+		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint8" sizey="8" userlevel="5" storageaddress="0x2012">
+			<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.0078125" coarseincrement="0.078125" />
 			<table type="Y Axis" name="Signal Center Deviation" storagetype="uint8" storageaddress="0x1E7E">
 				<scaling units="V/10 ms" expression="(x-128)*5/256" to_byte="x/(5/256)+128" format="0.00" fineincrement=".02" coarseincrement=".2" />
 			</table>
-			<description>Bank 1 O2 sensor heating: correction of the heating factor as a function of the deviation of the sensor signal centre from 'O2 Sensor Heater - Signal Center Reference (new)' (positive deviation = more heating, negative = less).</description>
+			<description>Bank 1 O2 sensor heating: correction of the heating factor as a function of the deviation of the sensor signal centre from 'O2 Sensor Heater - Signal Center Reference (new)' (positive deviation = more heating, negative = less). ID59: byte table read by Table_LookupValue in O2Heater_AdaptFactor_Calc (factor 1.0 = 128, same scale as 'O2 Sensor Heater - Adaptation Factor Max. (new)'), unlike the word table of the ID41.</description>
 		</table>
-		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 2 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint16" endian="little" sizey="8" userlevel="5" storageaddress="0x201C">
-			<scaling units="factor" expression="x*1.9922/65535" to_byte="x/(1.9922/65535)" format="0.000" fineincrement="0.00003" coarseincrement="0.000304" />
+		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 2 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint8" sizey="8" userlevel="5" storageaddress="0x201C">
+			<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.0078125" coarseincrement="0.078125" />
 			<table type="Y Axis" name="Signal Center Deviation" storagetype="uint8" storageaddress="0x1E7E">
 				<scaling units="V/10 ms" expression="(x-128)*5/256" to_byte="x/(5/256)+128" format="0.00" fineincrement=".02" coarseincrement=".2" />
 			</table>
-			<description>Like 'O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)', for the bank 2 sensor.</description>
+			<description>Like 'O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)', for the bank 2 sensor. ID59: byte table read by Table_LookupValue in O2Heater_AdaptFactor_Calc (factor 1.0 = 128, same scale as 'O2 Sensor Heater - Adaptation Factor Max. (new)'), unlike the word table of the ID41.</description>
 		</table>
 		<table type="3D" name="Max. Knock Retard (Lambda) (new)" category="Knock" storagetype="uint8" sizex="4" sizey="8" userlevel="5" storageaddress="0x2188">
 			<scaling units="°CRK" expression="(x-128)*0.375" to_byte="x/0.375+128" format="0.0" fineincrement="0.375" coarseincrement="3.75" />
@@ -66562,21 +66574,21 @@
 			<table type="Static Y Axis" name="Phase Timer A (No Lambda)" sizey="1">
 				<data>Phase Timer A (No Lambda)</data>
 			</table>
-			<description>Duration of the first purge phase (vehicles without lambda control).</description>
+			<description>Duration of the first purge phase (SoftTimerB_Cb08). ID59: the program has a single timer here, read whatever the lambda coding (no Lambda / No Lambda pair, unlike the ID41).</description>
 		</table>
 		<table type="2D" name="Lambda Adaptation - Phase Timer (Lambda) (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0xF4">
 			<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1" />
 			<table type="Static Y Axis" name="Phase Timer B (Lambda)" sizey="1">
 				<data>Phase Timer B (Lambda)</data>
 			</table>
-			<description>Lambda adaptation phase timer (vehicles with lambda control).</description>
+			<description>Lambda adaptation phase timer (SoftTimerB_Cb08). ID59: the program has a single timer here, read whatever the lambda coding.</description>
 		</table>
 		<table type="2D" name="Lambda Adaptation - Phase Timer (No Lambda) (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0xF6">
 			<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1" />
 			<table type="Static Y Axis" name="Phase Timer B (No Lambda)" sizey="1">
 				<data>Phase Timer B (No Lambda)</data>
 			</table>
-			<description>Lambda adaptation phase timer (vehicles without lambda control).</description>
+			<description>Word following the lambda adaptation phase timer (value 0). Not read by the program of this ECU (the ID59 has a single timer, 'Lambda Adaptation - Phase Timer (Lambda) (new)'), so editing it has no effect.</description>
 		</table>
 		<table type="2D" name="Canister Purge - Confirm Counter Limit (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint8" sizey="1" userlevel="5" storageaddress="0x122">
 			<scaling units="count" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10" />
@@ -68211,7 +68223,7 @@
 		<table type="BitwiseSwitch" name="Byte 6 - CAN Monitoring / EWS Input (new)" category="Control Bits" storageaddress="0x6" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - EWS removed: external immobiliser input on the satellite (bit 1 = 0)" />
 			<bit position="5" name="Bit 5 - CAN monitoring forced on" />
-			<description>Bit 5 (bits 6-7 act the same, keep them at 0): CAN monitoring = bus-off monitoring and EGS message 0x43F monitoring (with their faults). It is on when the gearbox is coded automatic or auto-detection (Byte 5), or when Byte 6 bits 5-7 are not 0, or when Byte 7 bit 2 = 1. Bit 0 (with bit 1 = 0), used only when EWS is removed (Byte 8 bit 7): satellite input bit 2 (Sat_ACInputs_F129) becomes an external immobiliser input; while it is active the engine is blocked as after an EWS refusal. Without this bit, EWS removed means no immobiliser at all. Bits 2-4: see 'Byte 6 - O2 Feedback'. Stock: 0x1C.</description>
+			<description>Bit 5 (bits 6-7 act the same, keep them at 0): CAN monitoring = bus-off monitoring and EGS message 0x43F monitoring (with their faults). It is on when the gearbox is coded automatic or auto-detection (Byte 5), or when Byte 6 bits 5-7 are not 0, or when Byte 7 bit 2 = 1. Bit 0 (with bit 1 = 0), used only when EWS is removed (Byte 8 bit 7): satellite input bit 2 (Sat_ACInputs_F129) becomes an external immobiliser input; while it is active the engine is blocked as after an EWS refusal. Without this bit, EWS removed means no immobiliser at all. Bits 2-4: see 'Byte 6 - O2 Feedback'. ID59 value: 0x04 (no lambda control).</description>
 		</table>
 		<table type="BitwiseSwitch" name="Byte 7 - ABS/ASC / Purge / CRC (new)" category="Control Bits" storageaddress="0x7" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - ABS/ASC interface by wires P1.12-P1.14 (bits 1-2 = 0)" />
@@ -68298,17 +68310,17 @@
 			<description>Raw value of coding byte 5 (stock 0xAC = 172). See 'Byte 5 - Transmission (new)'.</description>
 		</table>
 		<table name="Byte 6 - O2 Feedback" storageaddress="0x10006">
-			<state name="Lambda control - 1 sensor (coded)" data="00" />
-			<state name="Lambda control - 2 sensors (coded)" data="08" />
-			<state name="Lambda control - 1 sensor, auto-detection" data="18" />
-			<state name="Lambda control - 2 sensors, auto-detection (stock)" data="1C" />
-			<state name="No lambda control (engine without catalyst)" data="04" />
-			<state name="Lambda control - 1 sensor (coded) + CAN monitoring (0x20)" data="20" />
-			<state name="Lambda control - 2 sensors (coded) + CAN monitoring (0x28)" data="28" />
-			<state name="Lambda control - 1 sensor, auto-detection + CAN monitoring (0x38)" data="38" />
-			<state name="Lambda control - 2 sensors, auto-detection + CAN monitoring (0x3C)" data="3C" />
+			<state name="Lambda control - 1 sensor (0x00)" data="00" />
+			<state name="Lambda control - 1 sensor (0x0C)" data="0C" />
+			<state name="Lambda control - 2 sensors (0x08)" data="08" />
+			<state name="Lambda control - 2 sensors (0x14)" data="14" />
+			<state name="No lambda control (engine without catalyst, 0x04)" data="04" />
+			<state name="Lambda control - 1 sensor + CAN monitoring (0x20)" data="20" />
+			<state name="Lambda control - 1 sensor + CAN monitoring (0x2C)" data="2C" />
+			<state name="Lambda control - 2 sensors + CAN monitoring (0x28)" data="28" />
+			<state name="Lambda control - 2 sensors + CAN monitoring (0x34)" data="34" />
 			<state name="No lambda control (engine without catalyst) + CAN monitoring (0x24)" data="24" />
-			<description>Lambda configuration (bits 2-4 of coding byte 6). Bit 5 set: CAN monitoring forced on (see 'Byte 6 - CAN Monitoring / EWS Input (new)').</description>
+			<description>Lambda configuration (bits 2-4 of coding byte 6). The ID59 has no auto-detection of the O2 sensors: 0x00 or 0x0C = 1 sensor, 0x08 or 0x14 = 2 sensors (the two values of a pair act the same); 0x04 and any other value (0x18 and 0x1C included) = no lambda control, the '(No Lambda)' maps are used. Bit 5 set: CAN monitoring forced on (see 'Byte 6 - CAN Monitoring / EWS Input (new)'). ID59 value: 4 (ID41: 28).</description>
 		</table>
 		<table name="Byte 7" storageaddress="0x10007">
 			<description>Raw value of coding byte 7 (stock 0x09 = 9). See 'Byte 7 - ABS/ASC / Purge / CRC (new)'.</description>
@@ -68325,7 +68337,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x11188">
 			<table type="Y Axis" storageaddress="0x1063D" />
@@ -68609,7 +68621,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x109CA">
 			<table type="X Axis" storageaddress="0x1074E" />
 			<table type="Y Axis" storageaddress="0x10768" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x9CA) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10D20">
 			<table type="Y Axis" storageaddress="0x10768" />
@@ -69927,19 +69939,19 @@
 			</table>
 			<description>O2 sensor heating: rate of decrease of the duty cycle towards 'O2 Sensor Heater - Base Duty (vs RPM/Load) (new)', as a function of air flow.</description>
 		</table>
-		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint16" endian="little" sizey="8" userlevel="5" storageaddress="0x12012">
-			<scaling units="factor" expression="x*1.9922/65535" to_byte="x/(1.9922/65535)" format="0.000" fineincrement="0.00003" coarseincrement="0.000304" />
+		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint8" sizey="8" userlevel="5" storageaddress="0x12012">
+			<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.0078125" coarseincrement="0.078125" />
 			<table type="Y Axis" name="Signal Center Deviation" storagetype="uint8" storageaddress="0x11E7E">
 				<scaling units="V/10 ms" expression="(x-128)*5/256" to_byte="x/(5/256)+128" format="0.00" fineincrement=".02" coarseincrement=".2" />
 			</table>
-			<description>Bank 1 O2 sensor heating: correction of the heating factor as a function of the deviation of the sensor signal centre from 'O2 Sensor Heater - Signal Center Reference (new)' (positive deviation = more heating, negative = less).</description>
+			<description>Bank 1 O2 sensor heating: correction of the heating factor as a function of the deviation of the sensor signal centre from 'O2 Sensor Heater - Signal Center Reference (new)' (positive deviation = more heating, negative = less). ID59: byte table read by Table_LookupValue in O2Heater_AdaptFactor_Calc (factor 1.0 = 128, same scale as 'O2 Sensor Heater - Adaptation Factor Max. (new)'), unlike the word table of the ID41.</description>
 		</table>
-		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 2 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint16" endian="little" sizey="8" userlevel="5" storageaddress="0x1201C">
-			<scaling units="factor" expression="x*1.9922/65535" to_byte="x/(1.9922/65535)" format="0.000" fineincrement="0.00003" coarseincrement="0.000304" />
+		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 2 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint8" sizey="8" userlevel="5" storageaddress="0x1201C">
+			<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.0078125" coarseincrement="0.078125" />
 			<table type="Y Axis" name="Signal Center Deviation" storagetype="uint8" storageaddress="0x11E7E">
 				<scaling units="V/10 ms" expression="(x-128)*5/256" to_byte="x/(5/256)+128" format="0.00" fineincrement=".02" coarseincrement=".2" />
 			</table>
-			<description>Like 'O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)', for the bank 2 sensor.</description>
+			<description>Like 'O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)', for the bank 2 sensor. ID59: byte table read by Table_LookupValue in O2Heater_AdaptFactor_Calc (factor 1.0 = 128, same scale as 'O2 Sensor Heater - Adaptation Factor Max. (new)'), unlike the word table of the ID41.</description>
 		</table>
 		<table type="3D" name="Max. Knock Retard (Lambda) (new)" category="Knock" storagetype="uint8" sizex="4" sizey="8" userlevel="5" storageaddress="0x12188">
 			<scaling units="°CRK" expression="(x-128)*0.375" to_byte="x/0.375+128" format="0.0" fineincrement="0.375" coarseincrement="3.75" />
@@ -70868,21 +70880,21 @@
 			<table type="Static Y Axis" name="Phase Timer A (No Lambda)" sizey="1">
 				<data>Phase Timer A (No Lambda)</data>
 			</table>
-			<description>Duration of the first purge phase (vehicles without lambda control).</description>
+			<description>Duration of the first purge phase (SoftTimerB_Cb08). ID59: the program has a single timer here, read whatever the lambda coding (no Lambda / No Lambda pair, unlike the ID41).</description>
 		</table>
 		<table type="2D" name="Lambda Adaptation - Phase Timer (Lambda) (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x100F4">
 			<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1" />
 			<table type="Static Y Axis" name="Phase Timer B (Lambda)" sizey="1">
 				<data>Phase Timer B (Lambda)</data>
 			</table>
-			<description>Lambda adaptation phase timer (vehicles with lambda control).</description>
+			<description>Lambda adaptation phase timer (SoftTimerB_Cb08). ID59: the program has a single timer here, read whatever the lambda coding.</description>
 		</table>
 		<table type="2D" name="Lambda Adaptation - Phase Timer (No Lambda) (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x100F6">
 			<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1" />
 			<table type="Static Y Axis" name="Phase Timer B (No Lambda)" sizey="1">
 				<data>Phase Timer B (No Lambda)</data>
 			</table>
-			<description>Lambda adaptation phase timer (vehicles without lambda control).</description>
+			<description>Word following the lambda adaptation phase timer (value 0). Not read by the program of this ECU (the ID59 has a single timer, 'Lambda Adaptation - Phase Timer (Lambda) (new)'), so editing it has no effect.</description>
 		</table>
 		<table type="2D" name="Canister Purge - Confirm Counter Limit (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint8" sizey="1" userlevel="5" storageaddress="0x10122">
 			<scaling units="count" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10" />
@@ -72517,7 +72529,7 @@
 		<table type="BitwiseSwitch" name="Byte 6 - CAN Monitoring / EWS Input (new)" category="Control Bits" storageaddress="0x10006" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - EWS removed: external immobiliser input on the satellite (bit 1 = 0)" />
 			<bit position="5" name="Bit 5 - CAN monitoring forced on" />
-			<description>Bit 5 (bits 6-7 act the same, keep them at 0): CAN monitoring = bus-off monitoring and EGS message 0x43F monitoring (with their faults). It is on when the gearbox is coded automatic or auto-detection (Byte 5), or when Byte 6 bits 5-7 are not 0, or when Byte 7 bit 2 = 1. Bit 0 (with bit 1 = 0), used only when EWS is removed (Byte 8 bit 7): satellite input bit 2 (Sat_ACInputs_F129) becomes an external immobiliser input; while it is active the engine is blocked as after an EWS refusal. Without this bit, EWS removed means no immobiliser at all. Bits 2-4: see 'Byte 6 - O2 Feedback'. Stock: 0x1C.</description>
+			<description>Bit 5 (bits 6-7 act the same, keep them at 0): CAN monitoring = bus-off monitoring and EGS message 0x43F monitoring (with their faults). It is on when the gearbox is coded automatic or auto-detection (Byte 5), or when Byte 6 bits 5-7 are not 0, or when Byte 7 bit 2 = 1. Bit 0 (with bit 1 = 0), used only when EWS is removed (Byte 8 bit 7): satellite input bit 2 (Sat_ACInputs_F129) becomes an external immobiliser input; while it is active the engine is blocked as after an EWS refusal. Without this bit, EWS removed means no immobiliser at all. Bits 2-4: see 'Byte 6 - O2 Feedback'. ID59 value: 0x04 (no lambda control).</description>
 		</table>
 		<table type="BitwiseSwitch" name="Byte 7 - ABS/ASC / Purge / CRC (new)" category="Control Bits" storageaddress="0x10007" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - ABS/ASC interface by wires P1.12-P1.14 (bits 1-2 = 0)" />
@@ -72668,17 +72680,17 @@
 			<description>Raw value of coding byte 5 (stock 0xAC = 172). See 'Byte 5 - Transmission (new)'.</description>
 		</table>
 		<table name="Byte 6 - O2 Feedback" storageaddress="0x14006">
-			<state name="Lambda control - 1 sensor (coded)" data="00" />
-			<state name="Lambda control - 2 sensors (coded)" data="08" />
-			<state name="Lambda control - 1 sensor, auto-detection" data="18" />
-			<state name="Lambda control - 2 sensors, auto-detection (stock)" data="1C" />
-			<state name="No lambda control (engine without catalyst)" data="04" />
-			<state name="Lambda control - 1 sensor (coded) + CAN monitoring (0x20)" data="20" />
-			<state name="Lambda control - 2 sensors (coded) + CAN monitoring (0x28)" data="28" />
-			<state name="Lambda control - 1 sensor, auto-detection + CAN monitoring (0x38)" data="38" />
-			<state name="Lambda control - 2 sensors, auto-detection + CAN monitoring (0x3C)" data="3C" />
+			<state name="Lambda control - 1 sensor (0x00)" data="00" />
+			<state name="Lambda control - 1 sensor (0x0C)" data="0C" />
+			<state name="Lambda control - 2 sensors (0x08)" data="08" />
+			<state name="Lambda control - 2 sensors (0x14)" data="14" />
+			<state name="No lambda control (engine without catalyst, 0x04)" data="04" />
+			<state name="Lambda control - 1 sensor + CAN monitoring (0x20)" data="20" />
+			<state name="Lambda control - 1 sensor + CAN monitoring (0x2C)" data="2C" />
+			<state name="Lambda control - 2 sensors + CAN monitoring (0x28)" data="28" />
+			<state name="Lambda control - 2 sensors + CAN monitoring (0x34)" data="34" />
 			<state name="No lambda control (engine without catalyst) + CAN monitoring (0x24)" data="24" />
-			<description>Lambda configuration (bits 2-4 of coding byte 6). Bit 5 set: CAN monitoring forced on (see 'Byte 6 - CAN Monitoring / EWS Input (new)').</description>
+			<description>Lambda configuration (bits 2-4 of coding byte 6). The ID59 has no auto-detection of the O2 sensors: 0x00 or 0x0C = 1 sensor, 0x08 or 0x14 = 2 sensors (the two values of a pair act the same); 0x04 and any other value (0x18 and 0x1C included) = no lambda control, the '(No Lambda)' maps are used. Bit 5 set: CAN monitoring forced on (see 'Byte 6 - CAN Monitoring / EWS Input (new)'). ID59 value: 4 (ID41: 28).</description>
 		</table>
 		<table name="Byte 7" storageaddress="0x14007">
 			<description>Raw value of coding byte 7 (stock 0x09 = 9). See 'Byte 7 - ABS/ASC / Purge / CRC (new)'.</description>
@@ -72695,7 +72707,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x15188">
 			<table type="Y Axis" storageaddress="0x1463D" />
@@ -72979,7 +72991,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x149CA">
 			<table type="X Axis" storageaddress="0x1474E" />
 			<table type="Y Axis" storageaddress="0x14768" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x9CA) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14D20">
 			<table type="Y Axis" storageaddress="0x14768" />
@@ -74297,19 +74309,19 @@
 			</table>
 			<description>O2 sensor heating: rate of decrease of the duty cycle towards 'O2 Sensor Heater - Base Duty (vs RPM/Load) (new)', as a function of air flow.</description>
 		</table>
-		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint16" endian="little" sizey="8" userlevel="5" storageaddress="0x16012">
-			<scaling units="factor" expression="x*1.9922/65535" to_byte="x/(1.9922/65535)" format="0.000" fineincrement="0.00003" coarseincrement="0.000304" />
+		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint8" sizey="8" userlevel="5" storageaddress="0x16012">
+			<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.0078125" coarseincrement="0.078125" />
 			<table type="Y Axis" name="Signal Center Deviation" storagetype="uint8" storageaddress="0x15E7E">
 				<scaling units="V/10 ms" expression="(x-128)*5/256" to_byte="x/(5/256)+128" format="0.00" fineincrement=".02" coarseincrement=".2" />
 			</table>
-			<description>Bank 1 O2 sensor heating: correction of the heating factor as a function of the deviation of the sensor signal centre from 'O2 Sensor Heater - Signal Center Reference (new)' (positive deviation = more heating, negative = less).</description>
+			<description>Bank 1 O2 sensor heating: correction of the heating factor as a function of the deviation of the sensor signal centre from 'O2 Sensor Heater - Signal Center Reference (new)' (positive deviation = more heating, negative = less). ID59: byte table read by Table_LookupValue in O2Heater_AdaptFactor_Calc (factor 1.0 = 128, same scale as 'O2 Sensor Heater - Adaptation Factor Max. (new)'), unlike the word table of the ID41.</description>
 		</table>
-		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 2 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint16" endian="little" sizey="8" userlevel="5" storageaddress="0x1601C">
-			<scaling units="factor" expression="x*1.9922/65535" to_byte="x/(1.9922/65535)" format="0.000" fineincrement="0.00003" coarseincrement="0.000304" />
+		<table type="2D" name="O2 Sensor Heater - Adaptation Step Bank 2 (vs Signal Center) (new)" category="Closed Loop" storagetype="uint8" sizey="8" userlevel="5" storageaddress="0x1601C">
+			<scaling units="factor" expression="x/128" to_byte="x*128" format="0.000" fineincrement="0.0078125" coarseincrement="0.078125" />
 			<table type="Y Axis" name="Signal Center Deviation" storagetype="uint8" storageaddress="0x15E7E">
 				<scaling units="V/10 ms" expression="(x-128)*5/256" to_byte="x/(5/256)+128" format="0.00" fineincrement=".02" coarseincrement=".2" />
 			</table>
-			<description>Like 'O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)', for the bank 2 sensor.</description>
+			<description>Like 'O2 Sensor Heater - Adaptation Step Bank 1 (vs Signal Center) (new)', for the bank 2 sensor. ID59: byte table read by Table_LookupValue in O2Heater_AdaptFactor_Calc (factor 1.0 = 128, same scale as 'O2 Sensor Heater - Adaptation Factor Max. (new)'), unlike the word table of the ID41.</description>
 		</table>
 		<table type="3D" name="Max. Knock Retard (Lambda) (new)" category="Knock" storagetype="uint8" sizex="4" sizey="8" userlevel="5" storageaddress="0x16188">
 			<scaling units="°CRK" expression="(x-128)*0.375" to_byte="x/0.375+128" format="0.0" fineincrement="0.375" coarseincrement="3.75" />
@@ -75238,21 +75250,21 @@
 			<table type="Static Y Axis" name="Phase Timer A (No Lambda)" sizey="1">
 				<data>Phase Timer A (No Lambda)</data>
 			</table>
-			<description>Duration of the first purge phase (vehicles without lambda control).</description>
+			<description>Duration of the first purge phase (SoftTimerB_Cb08). ID59: the program has a single timer here, read whatever the lambda coding (no Lambda / No Lambda pair, unlike the ID41).</description>
 		</table>
 		<table type="2D" name="Lambda Adaptation - Phase Timer (Lambda) (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x140F4">
 			<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1" />
 			<table type="Static Y Axis" name="Phase Timer B (Lambda)" sizey="1">
 				<data>Phase Timer B (Lambda)</data>
 			</table>
-			<description>Lambda adaptation phase timer (vehicles with lambda control).</description>
+			<description>Lambda adaptation phase timer (SoftTimerB_Cb08). ID59: the program has a single timer here, read whatever the lambda coding.</description>
 		</table>
 		<table type="2D" name="Lambda Adaptation - Phase Timer (No Lambda) (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x140F6">
 			<scaling units="s" expression="x*0.1" to_byte="x/0.1" format="0.0" fineincrement="0.1" coarseincrement="1" />
 			<table type="Static Y Axis" name="Phase Timer B (No Lambda)" sizey="1">
 				<data>Phase Timer B (No Lambda)</data>
 			</table>
-			<description>Lambda adaptation phase timer (vehicles without lambda control).</description>
+			<description>Word following the lambda adaptation phase timer (value 0). Not read by the program of this ECU (the ID59 has a single timer, 'Lambda Adaptation - Phase Timer (Lambda) (new)'), so editing it has no effect.</description>
 		</table>
 		<table type="2D" name="Canister Purge - Confirm Counter Limit (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Canister Purge (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint8" sizey="1" userlevel="5" storageaddress="0x14122">
 			<scaling units="count" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10" />
@@ -76887,7 +76899,7 @@
 		<table type="BitwiseSwitch" name="Byte 6 - CAN Monitoring / EWS Input (new)" category="Control Bits" storageaddress="0x14006" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - EWS removed: external immobiliser input on the satellite (bit 1 = 0)" />
 			<bit position="5" name="Bit 5 - CAN monitoring forced on" />
-			<description>Bit 5 (bits 6-7 act the same, keep them at 0): CAN monitoring = bus-off monitoring and EGS message 0x43F monitoring (with their faults). It is on when the gearbox is coded automatic or auto-detection (Byte 5), or when Byte 6 bits 5-7 are not 0, or when Byte 7 bit 2 = 1. Bit 0 (with bit 1 = 0), used only when EWS is removed (Byte 8 bit 7): satellite input bit 2 (Sat_ACInputs_F129) becomes an external immobiliser input; while it is active the engine is blocked as after an EWS refusal. Without this bit, EWS removed means no immobiliser at all. Bits 2-4: see 'Byte 6 - O2 Feedback'. Stock: 0x1C.</description>
+			<description>Bit 5 (bits 6-7 act the same, keep them at 0): CAN monitoring = bus-off monitoring and EGS message 0x43F monitoring (with their faults). It is on when the gearbox is coded automatic or auto-detection (Byte 5), or when Byte 6 bits 5-7 are not 0, or when Byte 7 bit 2 = 1. Bit 0 (with bit 1 = 0), used only when EWS is removed (Byte 8 bit 7): satellite input bit 2 (Sat_ACInputs_F129) becomes an external immobiliser input; while it is active the engine is blocked as after an EWS refusal. Without this bit, EWS removed means no immobiliser at all. Bits 2-4: see 'Byte 6 - O2 Feedback'. ID59 value: 0x04 (no lambda control).</description>
 		</table>
 		<table type="BitwiseSwitch" name="Byte 7 - ABS/ASC / Purge / CRC (new)" category="Control Bits" storageaddress="0x14007" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - ABS/ASC interface by wires P1.12-P1.14 (bits 1-2 = 0)" />
@@ -77059,7 +77071,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x1462">
 			<table type="Y Axis" storageaddress="0x7B7" />
@@ -77343,7 +77355,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0xB44">
 			<table type="X Axis" storageaddress="0x8C8" />
 			<table type="Y Axis" storageaddress="0x8E2" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B44) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0xE9A">
 			<table type="Y Axis" storageaddress="0x8E2" />
@@ -82476,7 +82488,7 @@
 			<table type="Static Y Axis" name="Init Value F5A0" sizey="1">
 				<data>Init Value F5A0</data>
 			</table>
-			<description>Initial value of word_FAE6 at start. Read by LoadSnapshot_And_SecondaryTargets. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
+			<description>Word at the place of the ID42 start value of EVAP_StartDelay_Counter. Not read by the program of this ECU: LoadSnapshot_And_SecondaryTargets has no such initialisation here, so editing it has no effect. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
 		</table>
 		<table type="2D" name="Secondary Air Monitor - Start Delay (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;ID60 OBD - Secondary Air (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x1C6">
 			<scaling units="s" expression="x*0.02" to_byte="x/0.02" format="0.00" fineincrement="0.02" coarseincrement="0.2" />
@@ -83666,7 +83678,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x11462">
 			<table type="Y Axis" storageaddress="0x107B7" />
@@ -83950,7 +83962,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x10B44">
 			<table type="X Axis" storageaddress="0x108C8" />
 			<table type="Y Axis" storageaddress="0x108E2" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B44) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10E9A">
 			<table type="Y Axis" storageaddress="0x108E2" />
@@ -89147,7 +89159,7 @@
 			<table type="Static Y Axis" name="Init Value F5A0" sizey="1">
 				<data>Init Value F5A0</data>
 			</table>
-			<description>Initial value of word_FAE6 at start. Read by LoadSnapshot_And_SecondaryTargets. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
+			<description>Word at the place of the ID42 start value of EVAP_StartDelay_Counter. Not read by the program of this ECU: LoadSnapshot_And_SecondaryTargets has no such initialisation here, so editing it has no effect. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
 		</table>
 		<table type="2D" name="Secondary Air Monitor - Start Delay (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;ID60 OBD - Secondary Air (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x101C6">
 			<scaling units="s" expression="x*0.02" to_byte="x/0.02" format="0.00" fineincrement="0.02" coarseincrement="0.2" />
@@ -90337,7 +90349,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x15462">
 			<table type="Y Axis" storageaddress="0x147B7" />
@@ -90621,7 +90633,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x14B44">
 			<table type="X Axis" storageaddress="0x148C8" />
 			<table type="Y Axis" storageaddress="0x148E2" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B44) outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14E9A">
 			<table type="Y Axis" storageaddress="0x148E2" />
@@ -95818,7 +95830,7 @@
 			<table type="Static Y Axis" name="Init Value F5A0" sizey="1">
 				<data>Init Value F5A0</data>
 			</table>
-			<description>Initial value of word_FAE6 at start. Read by LoadSnapshot_And_SecondaryTargets. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
+			<description>Word at the place of the ID42 start value of EVAP_StartDelay_Counter. Not read by the program of this ECU: LoadSnapshot_And_SecondaryTargets has no such initialisation here, so editing it has no effect. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
 		</table>
 		<table type="2D" name="Secondary Air Monitor - Start Delay (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;ID60 OBD - Secondary Air (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x141C6">
 			<scaling units="s" expression="x*0.02" to_byte="x/0.02" format="0.00" fineincrement="0.02" coarseincrement="0.2" />
@@ -97008,7 +97020,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm. ID60EOBD value: 0 rpm (ID60: 20 rpm).</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect. ID60EOBD value: 0 rpm (ID60: 20 rpm).</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x11462">
 			<table type="Y Axis" storageaddress="0x107B7" />
@@ -97292,7 +97304,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x10B44">
 			<table type="X Axis" storageaddress="0x108C8" />
 			<table type="Y Axis" storageaddress="0x108E2" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B44) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID60EOBD: 192 of 192 values differ from the ID60 file.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID60EOBD: 192 of 192 values differ from the ID60 file.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10E9A">
 			<table type="Y Axis" storageaddress="0x108E2" />
@@ -102489,7 +102501,7 @@
 			<table type="Static Y Axis" name="Init Value F5A0" sizey="1">
 				<data>Init Value F5A0</data>
 			</table>
-			<description>Initial value of word_FAE6 at start. Read by LoadSnapshot_And_SecondaryTargets. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
+			<description>Word at the place of the ID42 start value of EVAP_StartDelay_Counter. Not read by the program of this ECU: LoadSnapshot_And_SecondaryTargets has no such initialisation here, so editing it has no effect. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
 		</table>
 		<table type="2D" name="Secondary Air Monitor - Start Delay (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;ID60 OBD - Secondary Air (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x101C6">
 			<scaling units="s" expression="x*0.02" to_byte="x/0.02" format="0.00" fineincrement="0.02" coarseincrement="0.2" />
@@ -103679,7 +103691,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm. ID60EOBD value: 0 rpm (ID60: 20 rpm).</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect. ID60EOBD value: 0 rpm (ID60: 20 rpm).</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x15462">
 			<table type="Y Axis" storageaddress="0x147B7" />
@@ -103963,7 +103975,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x14B44">
 			<table type="X Axis" storageaddress="0x148C8" />
 			<table type="Y Axis" storageaddress="0x148E2" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B44) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID60EOBD: 192 of 192 values differ from the ID60 file.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID60EOBD: 192 of 192 values differ from the ID60 file.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14E9A">
 			<table type="Y Axis" storageaddress="0x148E2" />
@@ -109160,7 +109172,7 @@
 			<table type="Static Y Axis" name="Init Value F5A0" sizey="1">
 				<data>Init Value F5A0</data>
 			</table>
-			<description>Initial value of word_FAE6 at start. Read by LoadSnapshot_And_SecondaryTargets. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
+			<description>Word at the place of the ID42 start value of EVAP_StartDelay_Counter. Not read by the program of this ECU: LoadSnapshot_And_SecondaryTargets has no such initialisation here, so editing it has no effect. IDA name: CAL_01C4_Exhaust_Temp_Model_Init_Value_F5A0.</description>
 		</table>
 		<table type="2D" name="Secondary Air Monitor - Start Delay (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;ID60 OBD - Secondary Air (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint16" endian="little" sizey="1" userlevel="5" storageaddress="0x141C6">
 			<scaling units="s" expression="x*0.02" to_byte="x/0.02" format="0.00" fineincrement="0.02" coarseincrement="0.2" />
@@ -110350,7 +110362,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x146C">
 			<table type="Y Axis" storageaddress="0x7C1" />
@@ -110634,7 +110646,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0xB4E">
 			<table type="X Axis" storageaddress="0x8D2" />
 			<table type="Y Axis" storageaddress="0x8EC" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B4E) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID85: 74 of 192 values recalibrated compared with the ID60.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID85: 74 of 192 values recalibrated compared with the ID60.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0xEA4">
 			<table type="Y Axis" storageaddress="0x8EC" />
@@ -114730,18 +114742,18 @@
 			<bit position="2" name="Bit 2 - CAN monitoring on (no ABS/ASC wire interface)" />
 			<bit position="3" name="Bit 3 - Canister purge active" />
 			<bit position="4" name="Bit 4 - Calibration CRC check disabled" />
-			<description>Bits 0-2: ABS/ASC (traction control) interface. 001 (bit 0 alone): torque reduction and MSR requests by the three wires P1.14, P1.13 and P1.12, with their duration faults. Any other non-zero value only enables the input states (reported over the K-line) and does not start the interface; bit 2 = 1 also switches CAN monitoring on. Bit 3: canister purge. Bit 4: no CRC check of the calibration regions (a modified calibration is then accepted without checksum correction). Bits 5-7: no effect. Stock: 0x09.</description>
+			<description>Bits 0-2: ABS/ASC (traction control) interface. 001 (bit 0 alone): torque reduction and MSR requests by the three wires P1.14, P1.13 and P1.12, with their duration faults. Any other non-zero value only enables the input states (reported over the K-line) and does not start the interface; bit 2 = 1 also switches CAN monitoring on. Bit 3: canister purge (in the ID85, also switched on by Byte 8 bits 4-6). Bit 4: no CRC check of the calibration regions (a modified calibration is then accepted without checksum correction). Bits 5-7: no effect. Stock: 0x09.</description>
 		</table>
 		<table type="BitwiseSwitch" name="Byte 8 - OBD / EWS (new)" category="Control Bits" storageaddress="0x8" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - MIL not driven by the OBD logic" />
 			<bit position="1" name="Bit 1 - OBD: faster confirmation of flagged faults" />
 			<bit position="2" name="Bit 2 - Idle valve diagnosis" />
 			<bit position="3" name="Bit 3 - Exhaust flap" />
-			<bit position="4" name="Bit 4 - OBD-II on + EVAP leak test" />
-			<bit position="5" name="Bit 5 - OBD-II on + purge flow test (bit 4 = 0)" />
-			<bit position="6" name="Bit 6 - OBD-II on" />
+			<bit position="4" name="Bit 4 - OBD-II on + canister purge" />
+			<bit position="5" name="Bit 5 - OBD-II on + canister purge" />
+			<bit position="6" name="Bit 6 - OBD-II on + canister purge" />
 			<bit position="7" name="Bit 7 - EWS removed" />
-			<description>Bits 4-6: OBD-II functions on if any is set. With canister purge (Byte 7 bit 3): bit 4 selects the EVAP leak test, otherwise bit 5 the purge flow test. Bit 0: MIL not driven by the OBD logic. Bit 1: OBD driving-cycle counter of the flagged faults starts at 1. Bit 2: idle valve output diagnosis. Bit 3: exhaust flap. Bit 7: EWS removed (no ISN check). Stock: 0x1E. ID85 value: 38 (ID60: 150).</description>
+			<description>Bits 4-6: OBD-II functions on if any is set; in the ID85 they also switch the canister purge on (as Byte 7 bit 3). Bits 4 and 5 have no separate effect: the ID60 EVAP leak test by tank pressure sensor and purge flow test they selected are replaced by the LDP leak test. Bit 0: MIL not driven by the OBD logic. Bit 1: OBD driving-cycle counter of the flagged faults starts at 1. Bit 2: idle valve output diagnosis. Bit 3: exhaust flap. Bit 7: EWS removed (no ISN check). Stock: 0x1E. ID85 value: 38 (ID60: 150).</description>
 		</table>
 		<table type="2D" name="Fuel Injection - Trim per Cylinder (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Fuel Injection (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint8" sizey="6" userlevel="4" storageaddress="0x58">
 			<scaling units="% (100 = neutral)" expression="(0.5+x/256)*100" to_byte="(x/100-0.5)*256" format="0.0" fineincrement=".4" coarseincrement="4" />
@@ -117129,7 +117141,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x1146C">
 			<table type="Y Axis" storageaddress="0x107C1" />
@@ -117413,7 +117425,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x10B4E">
 			<table type="X Axis" storageaddress="0x108D2" />
 			<table type="Y Axis" storageaddress="0x108EC" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B4E) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID85: 74 of 192 values recalibrated compared with the ID60.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID85: 74 of 192 values recalibrated compared with the ID60.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x10EA4">
 			<table type="Y Axis" storageaddress="0x108EC" />
@@ -121509,18 +121521,18 @@
 			<bit position="2" name="Bit 2 - CAN monitoring on (no ABS/ASC wire interface)" />
 			<bit position="3" name="Bit 3 - Canister purge active" />
 			<bit position="4" name="Bit 4 - Calibration CRC check disabled" />
-			<description>Bits 0-2: ABS/ASC (traction control) interface. 001 (bit 0 alone): torque reduction and MSR requests by the three wires P1.14, P1.13 and P1.12, with their duration faults. Any other non-zero value only enables the input states (reported over the K-line) and does not start the interface; bit 2 = 1 also switches CAN monitoring on. Bit 3: canister purge. Bit 4: no CRC check of the calibration regions (a modified calibration is then accepted without checksum correction). Bits 5-7: no effect. Stock: 0x09.</description>
+			<description>Bits 0-2: ABS/ASC (traction control) interface. 001 (bit 0 alone): torque reduction and MSR requests by the three wires P1.14, P1.13 and P1.12, with their duration faults. Any other non-zero value only enables the input states (reported over the K-line) and does not start the interface; bit 2 = 1 also switches CAN monitoring on. Bit 3: canister purge (in the ID85, also switched on by Byte 8 bits 4-6). Bit 4: no CRC check of the calibration regions (a modified calibration is then accepted without checksum correction). Bits 5-7: no effect. Stock: 0x09.</description>
 		</table>
 		<table type="BitwiseSwitch" name="Byte 8 - OBD / EWS (new)" category="Control Bits" storageaddress="0x10008" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - MIL not driven by the OBD logic" />
 			<bit position="1" name="Bit 1 - OBD: faster confirmation of flagged faults" />
 			<bit position="2" name="Bit 2 - Idle valve diagnosis" />
 			<bit position="3" name="Bit 3 - Exhaust flap" />
-			<bit position="4" name="Bit 4 - OBD-II on + EVAP leak test" />
-			<bit position="5" name="Bit 5 - OBD-II on + purge flow test (bit 4 = 0)" />
-			<bit position="6" name="Bit 6 - OBD-II on" />
+			<bit position="4" name="Bit 4 - OBD-II on + canister purge" />
+			<bit position="5" name="Bit 5 - OBD-II on + canister purge" />
+			<bit position="6" name="Bit 6 - OBD-II on + canister purge" />
 			<bit position="7" name="Bit 7 - EWS removed" />
-			<description>Bits 4-6: OBD-II functions on if any is set. With canister purge (Byte 7 bit 3): bit 4 selects the EVAP leak test, otherwise bit 5 the purge flow test. Bit 0: MIL not driven by the OBD logic. Bit 1: OBD driving-cycle counter of the flagged faults starts at 1. Bit 2: idle valve output diagnosis. Bit 3: exhaust flap. Bit 7: EWS removed (no ISN check). Stock: 0x1E. ID85 value: 38 (ID60: 150).</description>
+			<description>Bits 4-6: OBD-II functions on if any is set; in the ID85 they also switch the canister purge on (as Byte 7 bit 3). Bits 4 and 5 have no separate effect: the ID60 EVAP leak test by tank pressure sensor and purge flow test they selected are replaced by the LDP leak test. Bit 0: MIL not driven by the OBD logic. Bit 1: OBD driving-cycle counter of the flagged faults starts at 1. Bit 2: idle valve output diagnosis. Bit 3: exhaust flap. Bit 7: EWS removed (no ISN check). Stock: 0x1E. ID85 value: 38 (ID60: 150).</description>
 		</table>
 		<table type="Switch" name="Checksum - Program Code Section (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Checksum (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint8" sizey="1" userlevel="5" storageaddress="0x205C">
 			<state name="Enabled" data="30" />
@@ -123972,7 +123984,7 @@
 			<table type="Static Y Axis" name="Idle Speed Target Offset" sizey="1">
 				<data>Idle Speed Target Offset</data>
 			</table>
-			<description>Fixed addition to the target idle speed during catalyst heating. Stock value: 20 rpm.</description>
+			<description>Word of the catalyst heating parameters (stock 20, read as rpm). No code reference to it was found in this program (no direct access, no pointer, no immediate operand): it is not read, so editing it has no effect.</description>
 		</table>
 		<table name="CH - Duration - Ignition Retard" storageaddress="0x1546C">
 			<table type="Y Axis" storageaddress="0x147C1" />
@@ -124256,7 +124268,7 @@
 		<table name="Fuel Injection - Base" storageaddress="0x14B4E">
 			<table type="X Axis" storageaddress="0x148D2" />
 			<table type="Y Axis" storageaddress="0x148EC" />
-			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc (0x0B4E) outside cranking. Starting point with other injectors: correct it by the flow ratio. ID85: 74 of 192 values recalibrated compared with the ID60.</description>
+			<description>Base injection time (engine speed x load) for a stoichiometric mixture, read by BaseMaps_PerEngineState_Calc outside cranking. Starting point with other injectors: correct it by the flow ratio. ID85: 74 of 192 values recalibrated compared with the ID60.</description>
 		</table>
 		<table name="Fuel Injection - Open Loop Enrichment" storageaddress="0x14EA4">
 			<table type="Y Axis" storageaddress="0x148EC" />
@@ -128352,18 +128364,18 @@
 			<bit position="2" name="Bit 2 - CAN monitoring on (no ABS/ASC wire interface)" />
 			<bit position="3" name="Bit 3 - Canister purge active" />
 			<bit position="4" name="Bit 4 - Calibration CRC check disabled" />
-			<description>Bits 0-2: ABS/ASC (traction control) interface. 001 (bit 0 alone): torque reduction and MSR requests by the three wires P1.14, P1.13 and P1.12, with their duration faults. Any other non-zero value only enables the input states (reported over the K-line) and does not start the interface; bit 2 = 1 also switches CAN monitoring on. Bit 3: canister purge. Bit 4: no CRC check of the calibration regions (a modified calibration is then accepted without checksum correction). Bits 5-7: no effect. Stock: 0x09.</description>
+			<description>Bits 0-2: ABS/ASC (traction control) interface. 001 (bit 0 alone): torque reduction and MSR requests by the three wires P1.14, P1.13 and P1.12, with their duration faults. Any other non-zero value only enables the input states (reported over the K-line) and does not start the interface; bit 2 = 1 also switches CAN monitoring on. Bit 3: canister purge (in the ID85, also switched on by Byte 8 bits 4-6). Bit 4: no CRC check of the calibration regions (a modified calibration is then accepted without checksum correction). Bits 5-7: no effect. Stock: 0x09.</description>
 		</table>
 		<table type="BitwiseSwitch" name="Byte 8 - OBD / EWS (new)" category="Control Bits" storageaddress="0x14008" sizey="1" userlevel="5">
 			<bit position="0" name="Bit 0 - MIL not driven by the OBD logic" />
 			<bit position="1" name="Bit 1 - OBD: faster confirmation of flagged faults" />
 			<bit position="2" name="Bit 2 - Idle valve diagnosis" />
 			<bit position="3" name="Bit 3 - Exhaust flap" />
-			<bit position="4" name="Bit 4 - OBD-II on + EVAP leak test" />
-			<bit position="5" name="Bit 5 - OBD-II on + purge flow test (bit 4 = 0)" />
-			<bit position="6" name="Bit 6 - OBD-II on" />
+			<bit position="4" name="Bit 4 - OBD-II on + canister purge" />
+			<bit position="5" name="Bit 5 - OBD-II on + canister purge" />
+			<bit position="6" name="Bit 6 - OBD-II on + canister purge" />
 			<bit position="7" name="Bit 7 - EWS removed" />
-			<description>Bits 4-6: OBD-II functions on if any is set. With canister purge (Byte 7 bit 3): bit 4 selects the EVAP leak test, otherwise bit 5 the purge flow test. Bit 0: MIL not driven by the OBD logic. Bit 1: OBD driving-cycle counter of the flagged faults starts at 1. Bit 2: idle valve output diagnosis. Bit 3: exhaust flap. Bit 7: EWS removed (no ISN check). Stock: 0x1E. ID85 value: 38 (ID60: 150).</description>
+			<description>Bits 4-6: OBD-II functions on if any is set; in the ID85 they also switch the canister purge on (as Byte 7 bit 3). Bits 4 and 5 have no separate effect: the ID60 EVAP leak test by tank pressure sensor and purge flow test they selected are replaced by the LDP leak test. Bit 0: MIL not driven by the OBD logic. Bit 1: OBD driving-cycle counter of the flagged faults starts at 1. Bit 2: idle valve output diagnosis. Bit 3: exhaust flap. Bit 7: EWS removed (no ISN check). Stock: 0x1E. ID85 value: 38 (ID60: 150).</description>
 		</table>
 		<table type="Switch" name="Checksum - Program Code Section (new)" category="&lt;html&gt;&lt;font color='#FF9696'&gt;&lt;i&gt;Checksum (new)&lt;/i&gt;&lt;/font&gt;&lt;/html&gt;" storagetype="uint8" sizey="1" userlevel="5" storageaddress="0x605C">
 			<state name="Enabled" data="30" />
